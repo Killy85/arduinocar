@@ -27,7 +27,7 @@ class ScanDelegate(DefaultDelegate):
 def queue_motor_rot(val):
     q_rot.put((update_motor_rot,val))
 
-def queue_motor_pow(val);
+def queue_motor_pow(val):
     q_pow.put((update_motor_pow,val))
 
 def update_motor_rot(val):
