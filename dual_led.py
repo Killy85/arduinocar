@@ -5,10 +5,10 @@ from random import randint
 from bluepy.btle import Scanner, DefaultDelegate, Peripheral
 
 from tkinter import *
-import Queue
+import queue
  
-q_rot = Queue.Queue()
-q_pow = Queue.Queue()
+q_rot = queue.Queue()
+q_pow = queue.Queue()
 peripheral = None
 
 
