@@ -5,10 +5,9 @@ from random import randint
 from bluepy.btle import Scanner, DefaultDelegate, Peripheral
 
 from tkinter import *
-import queue
  
-q_rot = queue.Queue()
-q_pow = queue.Queue()
+q_rot = []
+q_pow = []
 peripheral = None
 
 
@@ -25,10 +24,10 @@ class ScanDelegate(DefaultDelegate):
 
 
 def queue_motor_rot(val):
-    q_rot.put((update_motor_rot,val))
+    q_rot.append((update_motor_rot,val))
 
 def queue_motor_pow(val):
-    q_pow.put((update_motor_pow,val))
+    q_pow.append((update_motor_pow,val))
 
 def update_motor_rot(val):
     peripheral.write(('ROT '+val).encode('ascii'))
@@ -61,15 +60,17 @@ try:
     w2.pack()
 
     def task_rot():
-        if  not q_rot.empty():
-            action = q_rot.get()
+        if q_rot:
+            action = q_rot.pop()
             action[0](action[1])
+            q_rot = []
         master.after(10, task_rot)
 
     def task_pow():
-        if  not q_pow.empty():
-            action = q_pow.get()
+        if q_pow:
+            action = q_pow.pop()
             action[0](action[1])
+            q_pow = []
         master.after(10, task_pow)
     
     master.after(10, task_rot)
