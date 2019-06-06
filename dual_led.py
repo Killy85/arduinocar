@@ -2,6 +2,7 @@
 
 import time
 from random import randint
+from termcolor import colored
 from bluepy.btle import Scanner, DefaultDelegate, Peripheral
 
 from tkinter import *
@@ -46,37 +47,39 @@ try:
         if ii.addr == '34:03:de:34:94:69':
             periph = Peripheral(ii.addr)
             continue
+    if periph:
+        chars = periph.getCharacteristics()
 
-    chars = periph.getCharacteristics()
+        peripheral = chars[6]
 
-    peripheral = chars[6]
+        master = Tk()
+        w1 = Scale(master, from_=255, to=0, tickinterval=2, command=queue_motor_rot)
+        w1.set(0)
+        w1.pack()
+        w2 = Scale(master, from_=255, to=0,tickinterval=2, command=queue_motor_pow)
+        w2.set(0)
+        w2.pack()
 
-    master = Tk()
-    w1 = Scale(master, from_=255, to=0, tickinterval=2, command=queue_motor_rot)
-    w1.set(0)
-    w1.pack()
-    w2 = Scale(master, from_=255, to=0,tickinterval=2, command=queue_motor_pow)
-    w2.set(0)
-    w2.pack()
+        def task_rot():
+            if q_rot:
+                action = q_rot.pop()
+                action[0](action[1])
+                q_rot = []
+            master.after(10, task_rot)
 
-    def task_rot():
-        if q_rot:
-            action = q_rot.pop()
-            action[0](action[1])
-            q_rot = []
+        def task_pow():
+            if q_pow:
+                action = q_pow.pop()
+                action[0](action[1])
+                q_pow = []
+            master.after(10, task_pow)
+        
         master.after(10, task_rot)
-
-    def task_pow():
-        if q_pow:
-            action = q_pow.pop()
-            action[0](action[1])
-            q_pow = []
         master.after(10, task_pow)
-    
-    master.after(10, task_rot)
-    master.after(10, task_pow)
-    
-    mainloop()
+        
+        mainloop()
+    else:
+        print(colored('Unable to find the ArduinoCar. Is it started?', 'red'))
 
 except Exception as e:
     print(e)
