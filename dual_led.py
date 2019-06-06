@@ -5,10 +5,6 @@ from random import randint
 from bluepy.btle import Scanner, DefaultDelegate, Peripheral
 
 from tkinter import *
- 
-q_rot = []
-q_pow = []
-peripheral = None
 
 
 class ScanDelegate(DefaultDelegate):
@@ -36,12 +32,16 @@ def update_motor_rot(val):
 def update_motor_pow(val):
     peripheral.write(('POW '+ val).encode('ascii'))
 
+q_rot = [(update_motor_rot,0)]
+q_pow = [(update_motor_pow,0)]
+
 scanner = Scanner().withDelegate(ScanDelegate())
 
 time_diff = 0
 first_time = 1
 try:
     devices = scanner.scan(0.35)
+    periph = None
     for ii in devices:
         if ii.addr == '34:03:de:34:94:69':
             periph = Peripheral(ii.addr)
@@ -76,7 +76,8 @@ try:
     master.after(10, task_rot)
     master.after(10, task_pow)
     
+    mainloop()
+
 except Exception as e:
     print(e)
 
-mainloop()
